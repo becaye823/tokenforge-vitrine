@@ -150,6 +150,155 @@
     function afficherBlocAchat() { document.getElementById('app-section').classList.add('hidden'); document.getElementById('payment-section').classList.remove('hidden'); }
     function retourEspaceMembre() { document.getElementById('payment-section').classList.add('hidden'); document.getElementById('app-section').classList.remove('hidden'); document.getElementById('payment-area').innerHTML=""; }
 </script>
+<!-- ========================================== -->
+<!-- MODULE DE PAIEMENT BOA SÉNÉGAL (TOKENFORGE) -->
+<!-- ========================================== -->
+<div class="container" style="max-width: 600px; margin: 30px auto; font-family: sans-serif; padding: 20px;">
+    
+    <!-- 1. Déclencheur : Bouton d'achat initial -->
+    <div class="card" id="bloc-declencheur-paiement" style="background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+        <h3 style="color: #333; margin-top: 0;">Achat de Jetons TokenForge</h3>
+        <p style="color: #666;">Montant de la commande : <strong>5 000 FCFA</strong></p>
+        <button id="btn-valider-achat" class="btn-success" style="background-color: #28a745; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
+            Payer par Virement Bancaire BOA
+        </button>
+    </div>
 
+    <!-- Zone de chargement et d'affichage des erreurs d'API -->
+    <div id="statut-paiement" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
+
+    <!-- 2. Affichage Dynamique : Bloc d'instructions de virement BOA -->
+    <div id="instructions-banque-container"></div>
+
+    <!-- 3. Module Cloud : Formulaire de téléversement du reçu de virement -->
+    <div id="upload-recu-container" class="card" style="display: none; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; border: 2px dashed #0056b3;">
+        <h3 style="color: #0056b3; margin-top: 0;">📤 Transmettre votre reçu de virement</h3>
+        <p style="color: #555; font-size: 14px; line-height: 1.5;">
+            Pour accélérer le crédit de vos jetons, veuillez téléverser une capture d'écran, une photo ou le PDF de votre reçu BOA officiel.
+        </p>
+        
+        <form id="form-upload-recu" style="margin-top: 15px;">
+            <input type="file" id="fichier-recu" accept="image/*,application/pdf" required style="display: block; margin-bottom: 15px; width: 100%;">
+            <button type="submit" style="background-color: #0056b3; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                Envoyer la preuve de paiement
+            </button>
+        </form>
+        <div id="statut-upload" style="margin-top: 15px; font-weight: bold; font-size: 14px;"></div>
+    </div>
+</div>
+
+<script>
+// URL de votre API en production sur Render
+const BACKEND_URL = "https://onrender.com";
+
+// Génération d'un ID de commande aléatoire pour simuler un panier d'achat
+const ID_COMMANDE_TEST = "B" + Math.floor(100000 + Math.random() * 900000);
+
+// Écouteur d'événement sur le bouton principal
+document.getElementById("btn-valider-achat").addEventListener("click", function() {
+    // Déclenche l'appel API avec l'ID commande de test et un montant de 5000 FCFA
+    initierPaiementVirement(ID_COMMANDE_TEST, 5000);
+});
+
+/**
+ * Rôle 1 : Appeler le backend Render pour obtenir le RIB
+ */
+async function initierPaiementVirement(orderId, amount) {
+    const statusContainer = document.getElementById("statut-paiement");
+    statusContainer.innerHTML = "<p style='color: #0056b3;'>🔄 Traitement et enregistrement de votre commande en cours...</p>";
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: orderId, amount: parseFloat(amount) })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            statusContainer.innerHTML = ""; // Efface le message de chargement
+            afficherInstructionsBOA(data.instructions, orderId);
+        } else {
+            statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Une erreur est survenue côté serveur.</p>";
+        }
+    } catch (error) {
+        console.error("Erreur réseau API :", error);
+        statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Impossible de joindre le serveur de paiement.</p>";
+    }
+}
+
+/**
+ * Rôle 2 : Injecter le RIB BOA et afficher le module d'upload Cloud
+ */
+function afficherInstructionsBOA(instructions, orderId) {
+    const container = document.getElementById("instructions-banque-container");
+    
+    container.innerHTML = `
+        <div class="card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid #28a745; margin-top: 20px;">
+            <h3 style="color: #28a745; margin-top: 0;">📋 Coordonnées bancaires pour le virement</h3>
+            <p style="color: #333; font-size: 15px;">Veuillez effectuer le virement depuis votre application bancaire ou en agence :</p>
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; text-align: left;">
+                <tr><th style="padding: 6px 0; color: #666;">Banque :</th><td style="font-weight: bold;">${instructions.banque}</td></tr>
+                <tr><th style="padding: 6px 0; color: #666;">Titulaire :</th><td style="font-weight: bold;">${instructions.titulaire}</td></tr>
+                <tr><th style="padding: 6px 0; color: #666;">RIB :</th><td><code style="background: #f1f3f5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #d63384;">${instructions.rib}</code></td></tr>
+                <tr><th style="padding: 6px 0; color: #666;">Motif exigé :</th><td><strong style="color: #dc3545; background: #fff5f5; padding: 2px 6px; border: 1px solid #ffc9c9; border-radius: 4px;">${instructions.motif_obligatoire}</strong></td></tr>
+            </table>
+            <p style="font-size: 13px; color: #666; font-style: italic; margin-bottom: 0;">
+                ⚠️ Le traitement bancaire à la BOA prend généralement 24h à 48h ouvrées.
+            </p>
+        </div>
+    `;
+    
+    // Rendre visible le conteneur d'upload et lui attacher son écouteur d'envoi
+    activerModuleUpload(orderId);
+}
+
+/**
+ * Rôle 3 : Gérer le téléversement binaire (Multipart FormData) vers Supabase Cloud
+ */
+function activerModuleUpload(orderId) {
+    const uploadBlock = document.getElementById("upload-recu-container");
+    uploadBlock.style.display = "block"; // Affiche le module d'upload à l'écran
+    uploadBlock.scrollIntoView({ behavior: 'smooth' });
+
+    const form = document.getElementById("form-upload-recu");
+    
+    form.onsubmit = async (e) => {
+        e.preventDefault(); // Bloque le rechargement de la page HTML
+        
+        const fileInput = document.getElementById("fichier-recu");
+        const statut = document.getElementById("statut-upload");
+        
+        if (!fileInput.files || fileInput.files.length === 0) return;
+
+        statut.innerHTML = "<span style='color: #0056b3;'>🔄 Téléversement sécurisé de votre reçu vers le Cloud...</span>";
+
+        // Construction du package binaire requis par le framework FastAPI (python-multipart)
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("orderId", orderId);
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/paiement/upload-recu`, {
+                method: "POST",
+                body: formData // Le navigateur gère le Content-Type binaire automatiquement
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé sur le Cloud Supabase ! Vos jetons seront crédités après vérification.</span>";
+                form.reset(); // Vide le sélecteur de fichier
+            } else {
+                statut.innerHTML = `<span style='color: #dc3545;'>❌ Erreur de stockage : ${data.message}</span>`;
+            }
+        } catch (error) {
+            console.error("Erreur de téléversement :", error);
+            statut.innerHTML = "<span style='color: #dc3545;'>❌ Échec de la transmission du document.</span>";
+        }
+    };
+}
+</script>
 </body>
 </html>
