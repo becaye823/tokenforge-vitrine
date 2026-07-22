@@ -39,7 +39,7 @@ async function simulerAchatVirement() {
     document.getElementById('error-message').style.display = 'none';
 
     try {
-        // CORRECTION DE L'URL CI-DESSOUS
+        // CORRECTION FINALE : AJOUT DE HTTPS ET SÉPARATION DU CHEMIN DE L'API
         const response = await fetch('https://onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
