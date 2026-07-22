@@ -3,494 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TokenForgeATS - Plateforme IA</title>
+    <title>TokenForge AI - Plateforme Commerciale</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 450px; width: 100%; text-align: center; margin-bottom: 20px; }
-        h2 { color: #0056b3; margin-top: 0; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn { width: 100%; background-color: #0056b3; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background-color: #004085; }
-        .btn-success { background-color: #28a745; }
-        .btn-success:hover { background-color: #218838; }
-        .instructions { border: 2px solid #0056b3; padding: 15px; border-radius: 8px; background-color: #f8f9fa; text-align: left; }
-        code { background: #e9ecef; padding: 3px 6px; border-radius: 4px; font-family: monospace; }
+        body { font-family: sans-serif; background: #f8f9fa; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; margin-bottom: 10px; }
+        .btn { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; margin-bottom: 10px; }
+        .btn-primary { background-color: #0056b3; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
         .hidden { display: none; }
-        .status { font-weight: bold; color: #0056b3; margin: 10px 0; }
+        .status { font-weight: bold; margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
-<!-- 1. BLOC AUTHENTIFICATION (CONNEXION / INSCRIPTION) -->
-<div id="auth-section" class="card">
-    <h2>Connexion TokenForgeATS</h2>
-    <input type="email" id="auth-email" placeholder="Votre adresse e-mail">
-    <input type="password" id="auth-password" placeholder="Votre mot de passe">
-    <button class="btn" onclick="gererAuthentification('login')">Se connecter</button>
-    <p style="margin: 10px 0; font-size: 14px;">Ou</p>
-    <button class="btn btn-success" onclick="gererAuthentification('signup')">Créer un compte (+10k tokens gratuits)</button>
-</div>
+<div class="container">
+    <!-- 1. BLOC AUTHENTIFICATION -->
+    <div id="auth-section" class="card">
+        <h2>Connexion TokenForgeAI</h2>
+        <div class="form-group">
+            <input type="email" id="auth-email" placeholder="Votre adresse e-mail" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+        </div>
+        <div class="form-group">
+            <input type="password" id="auth-password" placeholder="Votre mot de passe" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+        </div>
+        <button type="button" class="btn" style="background-color: #0056b3; color: white;" onclick="gererAuthentification('login')">Se connecter</button>
+        <p style="margin: 10px 0; text-align: center;">Ou</p>
+        <button type="button" class="btn btn-success" onclick="gererAuthentification('signup')">Créer un compte (+10k tokens gratuits)</button>
+        <div id="statut-authentification" class="status"></div>
+    </div>
 
-<!-- 2. BLOC TABLEAU DE BORD & TRADUCTION IA -->
-<div id="app-section" class="card hidden">
-    <h2>Espace Membre IA</h2>
-    <p>Connecté en tant que : <strong id="user-display"></strong></p>
-    <p>Solde actuel : <strong id="balance-display">0</strong> tokens</p>
-    <hr>
-    <h3>Moteur de Traduction IA</h3>
-    <textarea id="text-to-translate" rows="3" placeholder="Écrivez le texte à traduire..."></textarea>
-    <select id="target-lang">
-        <option value="en">Anglais (EN)</option>
-        <option value="es">Espagnol (ES)</option>
-        <option value="ar">Arabe (AR)</option>
-    </select>
-    <button class="btn" onclick="traduireTexteIA()">Traduire avec l'IA</button>
-    <div id="translation-result" class="status"></div>
-    <hr>
-    <button class="btn btn-success" onclick="afficherBlocAchat()">Recharger mes Tokens</button>
-</div>
+    <!-- 2. BLOC TABLEAU DE BORD & TRADUCTION IA -->
+    <div id="app-section" class="card hidden">
+        <h2>Espace Membre IA</h2>
+        <p>Connecté en tant que : <strong id="user-display"></strong></p>
+        <p>Solde actuel : <strong id="balance-display">0</strong> tokens</p>
+        <hr>
+        <h3>Moteur de Traduction IA</h3>
+        <textarea id="text-to-translate" rows="3" placeholder="Écrivez le texte à traduire..." style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+        <select id="target-lang" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+            <option value="en">Anglais (EN)</option>
+            <option value="fr">Français (FR)</option>
+            <option value="es">Espagnol (ES)</option>
+        </select>
+        <button type="button" class="btn btn-primary" onclick="traduireTexte()">Traduire avec l'IA</button>
+        <div id="resultat-traduction" style="margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 4px; display: none;"></div>
+    </div>
 
-<!-- 3. BLOC ACHAT (VOTRE VIREMENT BOA) -->
-<div id="payment-section" class="card hidden">
-    <h2>Recharge Premium</h2>
-    <p>Abonnement Premium (1 000 000 Tokens)</p>
-    <p style="font-size: 20px; font-weight: bold;">10,00 EUR / 6 500 FCFA</p>
-    <button class="btn" onclick="demanderVirementBOA()">Générer le bon de virement BOA</button>
-    <div id="payment-area"></div>
-    <br>
-    <button class="btn" style="background-color: #6c757d;" onclick="retourEspaceMembre()">Retour</button>
-</div>
-
-<script>
-    const BACKEND_URL = "https://onrender.com";
-    let sessionEmail = "";
-
-    async function gererAuthentification(action) {
-        const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
-        if(!email || !password) return alert("Veuillez remplir tous les champs.");
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/auth/${action}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await response.json();
-            
-            if(response.ok && data.success) {
-                alert(data.message);
-                if(action === 'login') {
-                    sessionEmail = data.email;
-                    document.getElementById('user-display').innerText = data.email;
-                    document.getElementById('balance-display').innerText = data.token_balance;
-                    document.getElementById('auth-section').classList.add('hidden');
-                    document.getElementById('app-section').classList.remove('hidden');
-                }
-            } else {
-                alert(data.detail || "Une erreur est survenue.");
-            }
-        } catch (error) {
-            alert("Erreur de connexion au serveur Render.");
-        }
-    }
-
-    async function traduireTexteIA() {
-        const texte = document.getElementById('text-to-translate').value;
-        const langue = document.getElementById('target-lang').value;
-        const resultatDiv = document.getElementById('translation-result');
-        if(!texte) return alert("Veuillez écrire un texte.");
-
-        resultatDiv.innerText = "L'IA réfléchit...";
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/translate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: sessionEmail, texte_a_traduire: texte, langue_cible: langue })
-            });
-            const data = await response.json();
-            
-            if(response.ok && data.success) {
-                resultatDiv.innerHTML = `<p style="color:green;"><strong>Traduction :</strong> ${data.texte_traduit}</p><small>Tokens consommés : ${data.tokens_deduits}</small>`;
-                document.getElementById('balance-display').innerText = data.nouveau_solde_restant;
-            } else {
-                resultatDiv.innerText = data.detail || "Erreur de traduction.";
-            }
-        } catch (error) {
-            resultatDiv.innerText = "Erreur réseau.";
-        }
-    }
-
-    async function demanderVirementBOA() {
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderId: "1024", amount: 10.0 })
-            });
-            const data = await response.json();
-
-            if (data.success) {
-                document.getElementById('payment-area').innerHTML = `
-                    <div class="instructions" style="margin-top:15px;">
-                        <h3 style="color:#0056b3;margin-top:0;">📋 Instructions de Virement</h3>
-                        <p><strong>Banque :</strong> ${data.instructions.banque}</p>
-                        <p><strong>Titulaire :</strong> ${data.instructions.titulaire}</p>
-                        <p><strong>RIB :</strong> <code>${data.instructions.rib}</code></p>
-                        <p style="color:#dc3545;font-weight:bold;"><strong>Motif :</strong> ${data.instructions.motif_obligatoire}</p>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            alert("Erreur de récupération des données bancaires.");
-        }
-    }
-
-    function afficherBlocAchat() { document.getElementById('app-section').classList.add('hidden'); document.getElementById('payment-section').classList.remove('hidden'); }
-    function retourEspaceMembre() { document.getElementById('payment-section').classList.add('hidden'); document.getElementById('app-section').classList.remove('hidden'); document.getElementById('payment-area').innerHTML=""; }
-</script>
-<!-- ========================================== -->
-<!-- MODULE DE PAIEMENT BOA SÉNÉGAL (TOKENFORGE) -->
-<!-- ========================================== -->
-<div class="container" style="max-width: 600px; margin: 30px auto; font-family: sans-serif; padding: 20px;">
-    
-    <!-- 1. Déclencheur : Bouton d'achat initial -->
-    <div class="card" id="bloc-declencheur-paiement" style="background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
-        <h3 style="color: #333; margin-top: 0;">Achat de Jetons TokenForge</h3>
-        <p style="color: #666;">Montant de la commande : <strong>5 000 FCFA</strong></p>
-        <button id="btn-valider-achat" class="btn-success" style="background-color: #28a745; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%;">
+    <!-- 3. BLOC ACHAT DE JETONS BOA -->
+    <div class="card" id="bloc-declencheur-paiement">
+        <h3 style="margin-top: 0;">Achat de Jetons TokenForge</h3>
+        <p>Montant de la commande : <strong>5 000 FCFA</strong></p>
+        <button id="btn-valider-achat" class="btn" style="background-color: #0056b3; color: white;">
             Payer par Virement Bancaire BOA
         </button>
     </div>
 
-    <!-- Zone de chargement et d'affichage des erreurs d'API -->
-    <div id="statut-paiement" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
-
-    <!-- 2. Affichage Dynamique : Bloc d'instructions de virement BOA -->
+    <div id="statut-paiement" class="status"></div>
     <div id="instructions-banque-container"></div>
 
-    <!-- 3. Module Cloud : Formulaire de téléversement du reçu de virement -->
-    <div id="upload-recu-container" class="card" style="display: none; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; border: 2px dashed #0056b3;">
+    <!-- 4. MODULE UPLOAD CLOUD SUPABASE -->
+    <div id="upload-recu-container" class="card" style="display: none; border: 2px dashed #0056b3;">
         <h3 style="color: #0056b3; margin-top: 0;">📤 Transmettre votre reçu de virement</h3>
-        <p style="color: #555; font-size: 14px; line-height: 1.5;">
-            Pour accélérer le crédit de vos jetons, veuillez téléverser une capture d'écran, une photo ou le PDF de votre reçu BOA officiel.
-        </p>
-        
-        <form id="form-upload-recu" style="margin-top: 15px;">
-            <input type="file" id="fichier-recu" accept="image/*,application/pdf" required style="display: block; margin-bottom: 15px; width: 100%;">
-            <button type="submit" style="background-color: #0056b3; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                Envoyer la preuve de paiement
-            </button>
+        <p style="font-size: 14px; color:#555;">Veuillez téléverser la capture d'écran de votre virement BOA.</p>
+        <form id="form-upload-recu">
+            <input type="file" id="fichier-recu" accept="image/*,application/pdf" required style="margin-bottom: 15px;">
+            <button type="submit" class="btn btn-success">Envoyer la preuve de paiement</button>
         </form>
-        <div id="statut-upload" style="margin-top: 15px; font-weight: bold; font-size: 14px;"></div>
+        <div id="statut-upload" class="status"></div>
     </div>
+
+    <!-- BOUTON DE TEST -->
+    <button id="btn-test-direct" class="btn btn-secondary" style="margin-top:20px;">
+        🧪 Tester la liaison directe Render API
+    </button>
 </div>
 
-    <script>
-// URL de votre API en production sur Render
-const BACKEND_URL = "https://backend-token-ia.onrender.com";
-
-// Génération d'un ID de commande aléatoire pour simuler un panier d'achat
-const ID_COMMANDE_TEST = "B" + Math.floor(100000 + Math.random() * 900000);
-
-// Écouteur d'événement sur le bouton principal de virement
-document.getElementById("btn-valider-achat").addEventListener("click", function() {
-    initierPaiementVirement(ID_COMMANDE_TEST, 5000);
-});
-
-/**
- * Rôle 1 : Appeler le backend Render pour obtenir le RIB BOA
- */
-async function initierPaiementVirement(orderId, amount) {
-    const statusContainer = document.getElementById("statut-paiement");
-    statusContainer.innerHTML = "<p style='color: #0056b3;'>🔄 Traitement et enregistrement de votre commande en cours...</p>";
-
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId: orderId, amount: parseFloat(amount) })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            statusContainer.innerHTML = ""; // Efface le message de chargement
-            afficherInstructionsBOA(data.instructions, orderId);
-        } else {
-            statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Une erreur est survenue côté serveur.</p>";
-        }
-    } catch (error) {
-        console.error("Erreur réseau API :", error);
-        statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Impossible de joindre le serveur de paiement.</p>";
-    }
-}
-
-/**
- * Rôle 2 : Injecter le RIB BOA dans l'interface graphique
- */
-function afficherInstructionsBOA(instructions, orderId) {
-    const container = document.getElementById("instructions-banque-container");
-    
-    container.innerHTML = `
-        <div class="card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid #28a745; margin-top: 20px;">
-            <h3 style="color: #28a745; margin-top: 0;">📋 Coordonnées bancaires pour le virement</h3>
-            <p style="color: #333; font-size: 15px;">Veuillez effectuer le virement depuis votre application bancaire ou en agence :</p>
-            <table style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; text-align: left;">
-                <tr><th style="padding: 6px 0; color: #666;">Banque :</th><td style="font-weight: bold;">${instructions.banque}</td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">Titulaire :</th><td style="font-weight: bold;">${instructions.titulaire}</td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">RIB :</th><td><code style="background: #f1f3f5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #d63384;">${instructions.rib}</code></td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">Motif exigé :</th><td><strong style="color: #dc3545; background: #fff5f5; padding: 2px 6px; border: 1px solid #ffc9c9; border-radius: 4px;">${instructions.motif_obligatoire}</strong></td></tr>
-            </table>
-            <p style="font-size: 13px; color: #666; font-style: italic; margin-bottom: 0;">
-                ⚠️ Le traitement bancaire à la BOA prend généralement 24h à 48h ouvrées.
-            </p>
-        </div>
-    `;
-    
-    // Rendre visible le conteneur d'upload
-    activerModuleUpload(orderId);
-}
-
-/**
- * Rôle 3 : Gérer le téléversement binaire du reçu vers Supabase Storage
- */
-function activerModuleUpload(orderId) {
-    const uploadBlock = document.getElementById("upload-recu-container");
-    uploadBlock.style.display = "block"; // Affiche le module d'upload à l'écran
-    uploadBlock.scrollIntoView({ behavior: 'smooth' });
-
-    const form = document.getElementById("form-upload-recu");
-    
-    form.onsubmit = async (e) => {
-        e.preventDefault(); // Bloque le rechargement automatique de la page
-        
-        const fileInput = document.getElementById("fichier-recu");
-        const statut = document.getElementById("statut-upload");
-        
-        if (!fileInput.files || fileInput.files.length === 0) return;
-
-        statut.innerHTML = "<span style='color: #0056b3;'>🔄 Téléversement sécurisé de votre reçu vers le Cloud...</span>";
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]); // Correction : Envoi du premier fichier sélectionné
-        formData.append("orderId", orderId);
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/paiement/upload-recu`, {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé sur le Cloud Supabase ! Vos jetons seront crédités après vérification.</span>";
-                form.reset(); // Vide le champ de fichier après envoi réussi
-            } else {
-                statut.innerHTML = `<span style='color: #dc3545;'>❌ Erreur de stockage : ${data.message}</span>`;
-            }
-        } catch (error) {
-            console.error("Erreur de téléversement :", error);
-            statut.innerHTML = "<span style='color: #dc3545;'>❌ Échec de la transmission du document.</span>";
-        }
-    };
-}
-
-// GESTION GLOBALE DE L'AUTHENTIFICATION (SIGNUP / LOGIN)
-async function gererAuthentification(type) {
-    const email = document.getElementById("auth-email")?.value;
-    const password = document.getElementById("auth-password")?.value;
-    const statusDiv = document.getElementById("statut-paiement");
-
-    if (!email || !password) {
-        alert("Veuillez remplir tous les champs d'identification.");
-        return;
-    }
-
-    const endpoint = type === 'signup' ? '/api/v1/auth/signup' : '/api/v1/auth/login';
-    if (statusDiv) statusDiv.innerHTML = "🔄 Connexion sécurisée au serveur Render...";
-
-    try {
-        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            alert(type === 'signup' ? "Compte TokenForge créé avec succès ! Vous pouvez vous connecter." : "Connexion réussie !");
-            
-            if (type === 'login') {
-                document.getElementById("auth-section")?.classList.add("hidden");
-                document.getElementById("app-section")?.classList.remove("hidden");
-                const userDisplay = document.getElementById("user-display");
-                if (userDisplay) userDisplay.innerText = data.email || email;
-                
-                const balanceDisplay = document.getElementById("balance-display");
-                if (balanceDisplay) {
-                    balanceDisplay.innerText = data.token_balance !== undefined ? data.token_balance : 10000;
-                }
-            }
-            if (statusDiv) statusDiv.innerHTML = "";
-        } else {
-            alert("Erreur : " + (data.detail || "Identifiants incorrects ou e-mail déjà utilisé."));
-            if (statusDiv) statusDiv.innerHTML = "";
-        }
-    } catch (error) {
-        console.error("Erreur réseau d'authentification :", error);
-        alert("Erreur de connexion au serveur Render.");
-        if (statusDiv) statusDiv.innerHTML = "";
-    }
-}
-</script>
-</body>
-</html>
 <script>
-// URL de votre API en production sur Render
 const BACKEND_URL = "https://onrender.com";
-
-// Génération d'un ID de commande aléatoire pour simuler un panier d'achat
 const ID_COMMANDE_TEST = "B" + Math.floor(100000 + Math.random() * 900000);
 
-// Écouteur d'événement sur le bouton principal
-document.getElementById("btn-valider-achat").addEventListener("click", function() {
-    // Déclenche l'appel API avec l'ID commande de test et un montant de 5000 FCFA
+document.getElementById("btn-valider-achat").addEventListener("click", () => {
     initierPaiementVirement(ID_COMMANDE_TEST, 5000);
 });
 
-/**
- * Rôle 1 : Appeler le backend Render pour obtenir le RIB
- */
-async function initierPaiementVirement(orderId, amount) {
-    const statusContainer = document.getElementById("statut-paiement");
-    statusContainer.innerHTML = "<p style='color: #0056b3;'>🔄 Traitement et enregistrement de votre commande en cours...</p>";
-
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId: orderId, amount: parseFloat(amount) })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            statusContainer.innerHTML = ""; // Efface le message de chargement
-            afficherInstructionsBOA(data.instructions, orderId);
-        } else {
-            statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Une erreur est survenue côté serveur.</p>";
-        }
-    } catch (error) {
-        console.error("Erreur réseau API :", error);
-        statusContainer.innerHTML = "<p style='color: #dc3545;'>❌ Impossible de joindre le serveur de paiement.</p>";
-    }
-}
-
-/**
- * Rôle 2 : Injecter le RIB BOA et afficher le module d'upload Cloud
- */
-function afficherInstructionsBOA(instructions, orderId) {
-    const container = document.getElementById("instructions-banque-container");
-    
-    container.innerHTML = `
-        <div class="card" style="background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid #28a745; margin-top: 20px;">
-            <h3 style="color: #28a745; margin-top: 0;">📋 Coordonnées bancaires pour le virement</h3>
-            <p style="color: #333; font-size: 15px;">Veuillez effectuer le virement depuis votre application bancaire ou en agence :</p>
-            <table style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; text-align: left;">
-                <tr><th style="padding: 6px 0; color: #666;">Banque :</th><td style="font-weight: bold;">${instructions.banque}</td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">Titulaire :</th><td style="font-weight: bold;">${instructions.titulaire}</td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">RIB :</th><td><code style="background: #f1f3f5; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #d63384;">${instructions.rib}</code></td></tr>
-                <tr><th style="padding: 6px 0; color: #666;">Motif exigé :</th><td><strong style="color: #dc3545; background: #fff5f5; padding: 2px 6px; border: 1px solid #ffc9c9; border-radius: 4px;">${instructions.motif_obligatoire}</strong></td></tr>
-            </table>
-            <p style="font-size: 13px; color: #666; font-style: italic; margin-bottom: 0;">
-                ⚠️ Le traitement bancaire à la BOA prend généralement 24h à 48h ouvrées.
-            </p>
-        </div>
-    `;
-    
-    // Rendre visible le conteneur d'upload et lui attacher son écouteur d'envoi
-    activerModuleUpload(orderId);
-}
-
-/**
- * Rôle 3 : Gérer le téléversement binaire (Multipart FormData) vers Supabase Cloud
- */
-function activerModuleUpload(orderId) {
-    const uploadBlock = document.getElementById("upload-recu-container");
-    uploadBlock.style.display = "block"; // Affiche le module d'upload à l'écran
-    uploadBlock.scrollIntoView({ behavior: 'smooth' });
-
-    const form = document.getElementById("form-upload-recu");
-    
-    form.onsubmit = async (e) => {
-        e.preventDefault(); // Bloque le rechargement de la page HTML
-        
-        const fileInput = document.getElementById("fichier-recu");
-        const statut = document.getElementById("statut-upload");
-        
-        if (!fileInput.files || fileInput.files.length === 0) return;
-
-        statut.innerHTML = "<span style='color: #0056b3;'>🔄 Téléversement sécurisé de votre reçu vers le Cloud...</span>";
-
-        // Construction du package binaire requis par le framework FastAPI (python-multipart)
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        formData.append("orderId", orderId);
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/paiement/upload-recu`, {
-                method: "POST",
-                body: formData // Le navigateur gère le Content-Type binaire automatiquement
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé sur le Cloud Supabase ! Vos jetons seront crédités après vérification.</span>";
-                form.reset(); // Vide le sélecteur de fichier
-            } else {
-                statut.innerHTML = `<span style='color: #dc3545;'>❌ Erreur de stockage : ${data.message}</span>`;
-            }
-        } catch (error) {
-            console.error("Erreur de téléversement :", error);
-            statut.innerHTML = "<span style='color: #dc3545;'>❌ Échec de la transmission du document.</span>";
-        }
-    };
-}
-</script>
-</body>
-</html>
-<!-- BUTTON DE TEST TEMPORAIRE -->
-<button id="btn-test-direct" style="background-color: #6c757d; color: white; margin-top: 10px; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">
-    🧪 Lancer un Test de Connexion Direct (Simulé)
-</button>
-
-<script>
-const BACKEND_URL = "https://backend-token-ia.onrender.com";
-
-// 1. Bouton de test direct de l'API
 document.getElementById("btn-test-direct").addEventListener("click", async () => {
-    const statut = document.getElementById("statut-paiement") || document.querySelector(".status");
-    if (statut) statut.innerHTML = "<p style='color: orange;'>🧪 Test de ping vers le serveur...</p>";
-    
+    const statut = document.getElementById("statut-paiement");
+    statut.innerHTML = "<span style='color: orange;'>🧪 Ping du serveur en cours...</span>";
     try {
         const response = await fetch(`${BACKEND_URL}/`);
         const data = await response.json();
-        if (statut) statut.innerHTML = `<p style='color: green;'>✅ Connexion réussie ! Réponse du serveur : "${data.message}"</p>`;
+        statut.innerHTML = `<span style='color: green;'>✅ Serveur en ligne : "${data.message}"</span>`;
     } catch (error) {
-        if (statut) statut.innerHTML = "<p style='color: red;'>❌ Le test a échoué. Vérifiez que le serveur Render n'est pas en veille.</p>";
+        statut.innerHTML = "<span style='color: red;'>❌ Impossible de joindre l'API.</span>";
     }
 });
 
-// 2. Fonction globale d'authentification (Signup / Login)
 async function gererAuthentification(type) {
     const email = document.getElementById("auth-email").value;
     const password = document.getElementById("auth-password").value;
-    const statusDiv = document.querySelector(".status") || document.getElementById("statut-paiement");
+    const statut = document.getElementById("statut-authentification");
 
     if (!email || !password) {
         alert("Veuillez remplir tous les champs.");
@@ -498,7 +115,7 @@ async function gererAuthentification(type) {
     }
 
     const endpoint = type === 'signup' ? '/api/v1/auth/signup' : '/api/v1/auth/login';
-    if (statusDiv) statusDiv.innerHTML = "🔄 Connexion au serveur en cours...";
+    statut.innerHTML = "<span>🔄 Connexion sécurisée...</span>";
 
     try {
         const response = await fetch(`${BACKEND_URL}${endpoint}`, {
@@ -510,25 +127,81 @@ async function gererAuthentification(type) {
         const data = await response.json();
 
         if (response.ok && data.success) {
-            alert(type === 'signup' ? "Compte créé avec succès ! Vous pouvez vous connecter." : "Connexion réussie !");
+            statut.innerHTML = "";
+            alert(type === 'signup' ? "Compte créé ! Vous pouvez vous connecter." : "Connexion réussie !");
             
             if (type === 'login') {
+                localStorage.setItem("user_email", email);
                 document.getElementById("auth-section").classList.add("hidden");
                 document.getElementById("app-section").classList.remove("hidden");
-                document.getElementById("user-display").innerText = data.email || email;
-                if (data.token_balance !== undefined) {
-                    document.getElementById("balance-display").innerText = data.token_balance;
-                }
+                document.getElementById("user-display").innerText = email;
+                document.getElementById("balance-display").innerText = data.token_balance !== undefined ? data.token_balance : 10000;
             }
-            if (statusDiv) statusDiv.innerHTML = "";
         } else {
-            alert("Erreur : " + (data.detail || "Identifiants invalides ou e-mail déjà pris."));
-            if (statusDiv) statusDiv.innerHTML = "";
+            alert("Erreur : " + (data.detail || "Échec de l'opération"));
+            statut.innerHTML = "";
         }
     } catch (error) {
-        console.error("Erreur réseau :", error);
-        alert("Erreur de connexion au serveur Render.");
-        if (statusDiv) statusDiv.innerHTML = "";
+        alert("Erreur réseau lors de l'appel au serveur Render.");
+        statut.innerHTML = "";
     }
 }
-</script>
+
+async function initierPaiementVirement(orderId, amount) {
+    const statut = document.getElementById("statut-paiement");
+    statut.innerHTML = "<span>🔄 Génération du RIB...</span>";
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: orderId, amount: parseFloat(amount) })
+        });
+        const data = await response.json();
+        if (data.success) {
+            statut.innerHTML = "";
+            afficherInstructionsBOA(data.instructions, orderId);
+        }
+    } catch (error) {
+        statut.innerHTML = "<span style='color: red;'>❌ Échec de liaison API.</span>";
+    }
+}
+
+function afficherInstructionsBOA(instructions, orderId) {
+    const container = document.getElementById("instructions-banque-container");
+    container.innerHTML = `
+        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 2px solid #28a745; margin-top: 10px;">
+            <h4 style="color: #28a745; margin-top:0;">Virement BOA à effectuer :</h4>
+            <p><strong>Banque :</strong> ${instructions.banque}</p>
+            <p><strong>Titulaire :</strong> ${instructions.titulaire}</p>
+            <p><strong>RIB :</strong> <code>${instructions.rib}</code></p>
+            <p><strong>Motif obligatoire :</strong> <span style="color:red; font-weight:bold;">${instructions.motif_obligatoire}</span></p>
+        </div>
+    `;
+    activerModuleUpload(orderId);
+}
+
+function activerModuleUpload(orderId) {
+    document.getElementById("upload-recu-container").style.display = "block";
+    const form = document.getElementById("form-upload-recu");
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("fichier-recu");
+        const statut = document.getElementById("statut-upload");
+        
+        if (!fileInput.files.length) return;
+        statut.innerHTML = "<span>🔄 Archivage sur Supabase...</span>";
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("orderId", orderId);
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/paiement/upload-recu`, {
+                method: "POST",
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) {
+                statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé avec succès !</span>";
+                form.reset();
+            } else {
