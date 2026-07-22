@@ -11,10 +11,9 @@
         .price { font-size: 24px; font-weight: bold; color: #2d3748; margin: 20px 0; }
         .btn { width: 100%; background-color: #0056b3; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         .btn:hover { background-color: #004085; }
-        .instructions { border: 2px solid #0056b3; padding: 20px; border-radius: 8px; background-color: #f8f9fa; text-align: left; margin-top: 20px; animation: fadeIn 0.5s; }
+        .instructions { border: 2px solid #0056b3; padding: 20px; border-radius: 8px; background-color: #f8f9fa; text-align: left; margin-top: 20px; }
         code { background: #e9ecef; padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 14px; }
         .error { color: #dc3545; font-weight: bold; margin-top: 15px; display: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -32,18 +31,16 @@
 
 <script>
 async function simulerAchatVirement() {
-    const idCommandeTest = "TEST-" + Math.floor(Math.random() * 9000 + 1000);
     const bouton = document.querySelector('.btn');
     bouton.innerText = "Connexion au serveur...";
     bouton.disabled = true;
     document.getElementById('error-message').style.display = 'none';
 
     try {
-        // CORRECTION FINALE : AJOUT DE HTTPS ET SÉPARATION DU CHEMIN DE L'API
         const response = await fetch('https://onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId: idCommandeTest, amount: 10.0 })
+            body: JSON.stringify({ orderId: "1024", amount: 10.0 })
         });
 
         const data = await response.json();
@@ -62,20 +59,14 @@ async function simulerAchatVirement() {
                 </div>
             `;
         } else {
-            reinitialiserBouton();
+            bouton.innerText = "Acheter par Virement Bancaire";
+            bouton.disabled = false;
         }
     } catch (error) {
-        console.error("Erreur de connexion:", error);
-        reinitialiserBouton();
-        document.getElementById('error-message').style.display = 'block';
-    }
-}
-
-function reinitialiserBouton() {
-    const bouton = document.querySelector('.btn');
-    if (bouton) {
+        console.error("Erreur:", error);
         bouton.innerText = "Acheter par Virement Bancaire";
         bouton.disabled = false;
+        document.getElementById('error-message').style.display = 'block';
     }
 }
 </script>
