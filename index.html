@@ -205,3 +205,42 @@ function activerModuleUpload(orderId) {
                 statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé avec succès !</span>";
                 form.reset();
             } else {
+
+            <script>
+async function gererAuthentification(action) {
+    const email = document.getElementById('auth_email')?.value;
+    const password = document.getElementById('auth_password')?.value;
+    const statutDiv = document.getElementById('statut_authentification');
+
+    if (!email || !password) {
+        if (statutDiv) statutDiv.innerHTML = "<span style='color: red;'>Veuillez remplir tous les champs.</span>";
+        return;
+    }
+
+    if (statutDiv) statutDiv.innerHTML = "Opération en cours...";
+
+    try {
+        const endpoint = action === 'login' ? '/api/auth/login' : '/api/auth/signup';
+        const url = typeof BACKEND_URL !== 'undefined' ? BACKEND_URL : '';
+        
+        const response = await fetch(`${url}${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        
+        if (statutDiv) {
+            if (response.ok) {
+                statutDiv.innerHTML = "<span style='color: #28a745;'>Succès !</span>";
+            } else {
+                statutDiv.innerHTML = `<span style='color: red;'>Erreur : ${data.message || 'Échec'}</span>`;
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        if (statutDiv) statutDiv.innerHTML = "<span style='color: red;'>Erreur de connexion au serveur.</span>";
+    }
+}
+</script>
