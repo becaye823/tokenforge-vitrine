@@ -302,3 +302,22 @@ function activerModuleUpload(orderId) {
 </script>
 </body>
 </html>
+<!-- BOUTON DE TEST TEMPORAIRE -->
+<button id="btn-test-direct" style="background-color: #6c757d; color: white; margin-top: 10px; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer;">
+    🧪 Lancer un Test de Connexion Direct (Simulé)
+</button>
+
+<script>
+document.getElementById("btn-test-direct").addEventListener("click", async () => {
+    const statut = document.getElementById("statut-paiement");
+    statut.innerHTML = "<p style='color: orange;'>🧪 Test de ping vers le serveur...</p>";
+    
+    try {
+        const response = await fetch("https://onrender.com");
+        const data = await response.json();
+        statut.innerHTML = `<p style='color: green;'>✅ Connexion réussie ! Réponse du serveur : "${data.message}"</p>`;
+    } catch (error) {
+        statut.innerHTML = "<p style='color: red;'>❌ Le test a échoué. Vérifiez que le serveur Render n'est pas en veille.</p>";
+    }
+});
+</script>
