@@ -1,4 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion TokenForgeAI</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+        }
+        h2 { margin-top: 0; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .btn-blue { background-color: #0056b3; }
+        .btn-green { background-color: #28a745; }
+        .ou { text-align: center; margin: 10px 0; color: #666; }
+        #statut_authentification { text-align: center; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Connexion TokenForgeAI</h2>
+        
+        <input type="email" id="auth_email" placeholder="Votre adresse e-mail">
+        <input type="password" id="auth_password" placeholder="Votre mot de passe">
+        
+        <button class="btn-blue" onclick="gererAuthentification('login')">Se connecter</button>
+        
+        <div class="ou">Ou</div>
+        
+        <button class="btn-green" onclick="gererAuthentification('signup')">Créer un compte (+10k tokens gratuits)</button>
+        
+        <div id="statut_authentification"></div>
+    </div>
+
+    <div class="container">
+        <h3>Achat de Jetons TokenForge</h3>
+        <p>Montant de la commande : <strong>5 000 FCFA</strong></p>
+    </div>
+
 <script>
+// Configuration de l'URL du Backend (Modifiez cette adresse si nécessaire)
+const BACKEND_URL = "https://onrender.com"; 
+
 async function gererAuthentification(action) {
     const email = document.getElementById('auth_email')?.value;
     const password = document.getElementById('auth_password')?.value;
@@ -13,9 +88,8 @@ async function gererAuthentification(action) {
 
     try {
         const endpoint = action === 'login' ? '/api/auth/login' : '/api/auth/signup';
-        const url = typeof BACKEND_URL !== 'undefined' ? BACKEND_URL : '';
         
-        const response = await fetch(`${url}${endpoint}`, {
+        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -25,14 +99,17 @@ async function gererAuthentification(action) {
         
         if (statutDiv) {
             if (response.ok) {
-                statutDiv.innerHTML = "<span style='color: #28a745;'>Succès !</span>";
+                statutDiv.innerHTML = "<span style='color: #28a745;'>Succès ! Connexion réussie.</span>";
             } else {
-                statutDiv.innerHTML = `<span style='color: red;'>Erreur : ${data.message || 'Échec'}</span>`;
+                statutDiv.innerHTML = `<span style='color: red;'>Erreur : ${data.message || 'Échec de l\'opération'}</span>`;
             }
         }
     } catch (error) {
         console.error(error);
-        if (statutDiv) statutDiv.innerHTML = "<span style='color: red;'>Erreur de connexion au serveur.</span>";
+        if (statutDiv) statutDiv.innerHTML = "<span style='color: red;'>Erreur de connexion au serveur Render.</span>";
     }
 }
 </script>
+
+</body>
+</html>
