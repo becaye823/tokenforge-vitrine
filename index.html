@@ -2,211 +2,40 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>TokenForge AI - Plateforme Commerciale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion TokenForgeAI</title>
     <style>
-        body { font-family: sans-serif; background: #f8f9fa; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none; margin-bottom: 10px; }
-        .btn-primary { background-color: #0056b3; color: white; }
-        .btn-success { background-color: #28a745; color: white; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .hidden { display: none; }
-        .status { font-weight: bold; margin-top: 10px; text-align: center; }
+        body { font-family: sans-serif; background: #f8f9fa; padding: 20px; color: #333; display: flex; flex-direction: column; align-items: center; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 450px; margin-bottom: 20px; }
+        h2 { margin-top: 0; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin: 10px 0; }
+        .btn-blue { background-color: #0056b3; }
+        .btn-green { background-color: #28a745; }
+        .ou { text-align: center; margin: 10px 0; color: #666; }
+        #statut_authentification { text-align: center; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- 1. BLOC AUTHENTIFICATION -->
-    <div id="auth-section" class="card">
+    <div class="container">
         <h2>Connexion TokenForgeAI</h2>
-        <div class="form-group">
-            <input type="email" id="auth_email" placeholder="Votre adresse e-mail" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-        </div>
-        <div class="form-group">
-            <input type="password" id="auth_password" placeholder="Votre mot de passe" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-        </div>
-        <button type="button" class="btn" style="background-color: #0056b3; color: white;" onclick="gererAuthentification('login')">Se connecter</button>
-        <p style="margin: 10px 0; text-align: center;">Ou</p>
-        <button type="button" class="btn btn-success" onclick="gererAuthentification('signup')">Créer un compte (+10k tokens gratuits)</button>
-        <div id="statut_authentification" class="status"></div>
+        <input type="email" id="auth_email" placeholder="Votre adresse e-mail">
+        <input type="password" id="auth_password" placeholder="Votre mot de passe">
+        <button class="btn-blue" onclick="gererAuthentification('login')">Se connecter</button>
+        <div class="ou">Ou</div>
+        <button class="btn-green" onclick="gererAuthentification('signup')">Créer un compte (+10k tokens gratuits)</button>
+        <div id="statut_authentification"></div>
     </div>
 
-    <!-- 2. BLOC TABLEAU DE BORD & TRADUCTION IA -->
-    <div id="app-section" class="card hidden">
-        <h2>Espace Membre IA</h2>
-        <p>Connecté en tant que : <strong id="user-display"></strong></p>
-        <p>Solde actuel : <strong id="balance-display">0</strong> tokens</p>
-        <hr>
-        <h3>Moteur de Traduction IA</h3>
-        <textarea id="text-to-translate" rows="3" placeholder="Écrivez le texte à traduire..." style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
-        <select id="target-lang" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-            <option value="en">Anglais (EN)</option>
-            <option value="fr">Français (FR)</option>
-            <option value="es">Espagnol (ES)</option>
-        </select>
-        <button type="button" class="btn btn-primary" onclick="traduireTexte()">Traduire avec l'IA</button>
-        <div id="resultat-traduction" style="margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 4px; display: none;"></div>
-    </div>
-
-    <!-- 3. BLOC ACHAT DE JETONS BOA -->
-    <div class="card" id="bloc-declencheur-paiement">
-        <h3 style="margin-top: 0;">Achat de Jetons TokenForge</h3>
+    <div class="container">
+        <h3>Achat de Jetons TokenForge</h3>
         <p>Montant de la commande : <strong>5 000 FCFA</strong></p>
-        <button id="btn-valider-achat" class="btn" style="background-color: #0056b3; color: white;">
-            Payer par Virement Bancaire BOA
-        </button>
     </div>
-
-    <div id="statut-paiement" class="status"></div>
-    <div id="instructions-banque-container"></div>
-
-    <!-- 4. MODULE UPLOAD CLOUD SUPABASE -->
-    <div id="upload-recu-container" class="card" style="display: none; border: 2px dashed #0056b3;">
-        <h3 style="color: #0056b3; margin-top: 0;">📤 Transmettre votre reçu de virement</h3>
-        <p style="font-size: 14px; color:#555;">Veuillez téléverser la capture d'écran de votre virement BOA.</p>
-        <form id="form-upload-recu">
-            <input type="file" id="fichier-recu" accept="image/*,application/pdf" required style="margin-bottom: 15px;">
-            <button type="submit" class="btn btn-success">Envoyer la preuve de paiement</button>
-        </form>
-        <div id="statut-upload" class="status"></div>
-    </div>
-
-    <!-- BOUTON DE TEST -->
-    <button id="btn-test-direct" class="btn btn-secondary" style="margin-top:20px;">
-        🧪 Tester la liaison directe Render API
-    </button>
-</div>
 
 <script>
-const BACKEND_URL = "https://onrender.com";
-const ID_COMMANDE_TEST = "B" + Math.floor(100000 + Math.random() * 900000);
+const BACKEND_URL = "https://onrender.com"; 
 
-document.getElementById("btn-valider-achat").addEventListener("click", () => {
-    initierPaiementVirement(ID_COMMANDE_TEST, 5000);
-});
-
-document.getElementById("btn-test-direct").addEventListener("click", async () => {
-    const statut = document.getElementById("statut-paiement");
-    statut.innerHTML = "<span style='color: orange;'>🧪 Ping du serveur en cours...</span>";
-    try {
-        const response = await fetch(`${BACKEND_URL}/`);
-        const data = await response.json();
-        statut.innerHTML = `<span style='color: green;'>✅ Serveur en ligne : "${data.message}"</span>`;
-    } catch (error) {
-        statut.innerHTML = "<span style='color: red;'>❌ Impossible de joindre l'API.</span>";
-    }
-});
-
-async function gererAuthentification(type) {
-    const email = document.getElementById("auth-email").value;
-    const password = document.getElementById("auth-password").value;
-    const statut = document.getElementById("statut-authentification");
-
-    if (!email || !password) {
-        alert("Veuillez remplir tous les champs.");
-        return;
-    }
-
-    const endpoint = type === 'signup' ? '/api/v1/auth/signup' : '/api/v1/auth/login';
-    statut.innerHTML = "<span>🔄 Connexion sécurisée...</span>";
-
-    try {
-        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            statut.innerHTML = "";
-            alert(type === 'signup' ? "Compte créé ! Vous pouvez vous connecter." : "Connexion réussie !");
-            
-            if (type === 'login') {
-                localStorage.setItem("user_email", email);
-                document.getElementById("auth-section").classList.add("hidden");
-                document.getElementById("app-section").classList.remove("hidden");
-                document.getElementById("user-display").innerText = email;
-                document.getElementById("balance-display").innerText = data.token_balance !== undefined ? data.token_balance : 10000;
-            }
-        } else {
-            alert("Erreur : " + (data.detail || "Échec de l'opération"));
-            statut.innerHTML = "";
-        }
-    } catch (error) {
-        alert("Erreur réseau lors de l'appel au serveur Render.");
-        statut.innerHTML = "";
-    }
-}
-
-async function initierPaiementVirement(orderId, amount) {
-    const statut = document.getElementById("statut-paiement");
-    statut.innerHTML = "<span>🔄 Génération du RIB...</span>";
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/checkout-virement`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderId: orderId, amount: parseFloat(amount) })
-        });
-        const data = await response.json();
-        if (data.success) {
-            statut.innerHTML = "";
-            afficherInstructionsBOA(data.instructions, orderId);
-        }
-    } catch (error) {
-        statut.innerHTML = "<span style='color: red;'>❌ Échec de liaison API.</span>";
-    }
-}
-
-function afficherInstructionsBOA(instructions, orderId) {
-    const container = document.getElementById("instructions-banque-container");
-    container.innerHTML = `
-        <div style="background: #fff; padding: 20px; border-radius: 8px; border: 2px solid #28a745; margin-top: 10px;">
-            <h4 style="color: #28a745; margin-top:0;">Virement BOA à effectuer :</h4>
-            <p><strong>Banque :</strong> ${instructions.banque}</p>
-            <p><strong>Titulaire :</strong> ${instructions.titulaire}</p>
-            <p><strong>RIB :</strong> <code>${instructions.rib}</code></p>
-            <p><strong>Motif obligatoire :</strong> <span style="color:red; font-weight:bold;">${instructions.motif_obligatoire}</span></p>
-        </div>
-    `;
-    activerModuleUpload(orderId);
-}
-
-function activerModuleUpload(orderId) {
-    document.getElementById("upload-recu-container").style.display = "block";
-    const form = document.getElementById("form-upload-recu");
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        const fileInput = document.getElementById("fichier-recu");
-        const statut = document.getElementById("statut-upload");
-        
-        if (!fileInput.files.length) return;
-        statut.innerHTML = "<span>🔄 Archivage sur Supabase...</span>";
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        formData.append("orderId", orderId);
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/paiement/upload-recu`, {
-                method: "POST",
-                body: formData
-            });
-            const data = await response.json();
-            if (data.success) {
-                statut.innerHTML = "<span style='color: #28a745;'>✅ Reçu archivé avec succès !</span>";
-                form.reset();
-            } else {
-
-            <script>
 async function gererAuthentification(action) {
     const email = document.getElementById('auth_email')?.value;
     const password = document.getElementById('auth_password')?.value;
@@ -221,9 +50,7 @@ async function gererAuthentification(action) {
 
     try {
         const endpoint = action === 'login' ? '/api/auth/login' : '/api/auth/signup';
-        const url = typeof BACKEND_URL !== 'undefined' ? BACKEND_URL : '';
-        
-        const response = await fetch(`${url}${endpoint}`, {
+        const response = await fetch(`${BACKEND_URL}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -233,7 +60,7 @@ async function gererAuthentification(action) {
         
         if (statutDiv) {
             if (response.ok) {
-                statutDiv.innerHTML = "<span style='color: #28a745;'>Succès !</span>";
+                statutDiv.innerHTML = "<span style='color: #28a745;'>Succès ! Connexion réussie.</span>";
             } else {
                 statutDiv.innerHTML = `<span style='color: red;'>Erreur : ${data.message || 'Échec'}</span>`;
             }
@@ -244,3 +71,6 @@ async function gererAuthentification(action) {
     }
 }
 </script>
+
+</body>
+</html>
